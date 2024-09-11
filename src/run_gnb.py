@@ -1,4 +1,9 @@
 import argparse
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from MDLP.discretization import *
 from gnb_functions import quantileDiscretize, create_score_matrix, 
                           get_triplet_list_from_chu_liu, get_sorted_triple_list, 
                           test_result, test_results
