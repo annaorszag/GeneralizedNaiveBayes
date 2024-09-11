@@ -121,10 +121,10 @@ def replace_pair_prob(pair, label, dataframe, vector_realization, var_to_index_d
     p_prob = p1_prob*p2_prob
     return p_prob
 
-def get_probability(vector_realization, dataframe, triplet_list, pair_list, label, var_to_index_dict, model): 
+def get_probability(vector_realization, dataframe, triplet_list, pair_list, label, var_to_index_dict, algorithm): 
     t_prob_list = []
     p_prob_list = []
-    if model == 'GNBA':
+    if algorithm == 'GNBA':
       t0 = triplet_list[0]
       t0_prob = dataframe.loc[(dataframe[t0[0]]==label)\
                        &(dataframe[t0[1]]==vector_realization[var_to_index_dict[t0[1]]])\
@@ -154,7 +154,7 @@ def get_probability(vector_realization, dataframe, triplet_list, pair_list, labe
               t_prob_list.append(t_prob2)
       prob = np.prod(t_prob_list)/np.prod(p_prob_list)
       
-    elif model == 'GNBO':
+    elif algorithm == 'GNBO':
       for triplet in triplet_list:
           t_prob = dataframe.loc[(dataframe[triplet[0]]==label)\
                            &(dataframe[triplet[1]]==vector_realization[var_to_index_dict[triplet[1]]])\
@@ -176,11 +176,11 @@ def get_probability(vector_realization, dataframe, triplet_list, pair_list, labe
       prob = np.prod(t_prob_list)/np.prod(p_prob_list)
     return prob
 
-def get_probabilities_and_prediction(vector_realization, y, dataframe, triplet_list, pair_list, model):
+def get_probabilities_and_prediction(vector_realization, y, dataframe, triplet_list, pair_list, algorithm):
     # p_1
-    p_1 = get_probability(vector_realization, dataframe, triplet_list, pair_list, label1, model)
+    p_1 = get_probability(vector_realization, dataframe, triplet_list, pair_list, label1, algorithm)
     # p_2
-    p_2 = get_probability(vector_realization, dataframe, triplet_list, pair_list, label2, model)
+    p_2 = get_probability(vector_realization, dataframe, triplet_list, pair_list, label2, algorithm)
     
     if p_1 >= p_2:
         pred = label1
@@ -244,12 +244,12 @@ def get_sorted_triplet_list_from_chu_liu(heads, score_matrix, X_max_index, X_max
     print(d_parent)
     return sorted_triplet_list[::-1], sorted_pair_list[::-1], ic_list[::-1]
 
-def test_result(data_test, data_train, V3_list, V2_list, label_pos):
+def test_result(data_test, data_train, V3_list, V2_list, label_pos, algorithm):
     data_test_results = pd.DataFrame(columns = ['label', 'prob_'+str(label1), 'prob_'+str(label2), 'prediction'])
     for index, row in data_test.iterrows():
         y = np.array([row['Y']])
         vector = np.array(row[1:])
-        pred_row = get_probabilities_and_prediction(vector, y, data_train, V3_list, V2_list)
+        pred_row = get_probabilities_and_prediction(vector, y, data_train, V3_list, V2_list, algorithm)
         data_test_results = pd.concat([data_test_results, pred_row], 
                                       ignore_index=True)
 
@@ -274,7 +274,7 @@ def test_results(data_test, data_train, V3_list, V2_list, label_pos):
         for index, row in data_test.iterrows():
             y = np.array([row['Y']])
             vector = np.array(row[1:])
-            pred_row = get_probabilities_and_prediction(vector, y, data_train, V3_list[:num_of_triplets], V2_list[:(num_of_triplets-1)])
+            pred_row = get_probabilities_and_prediction(vector, y, data_train, V3_list[:num_of_triplets], V2_list[:(num_of_triplets-1)], label_pos, algorithm)
             data_test_results = pd.concat([data_test_results, pred_row], 
                                           ignore_index=True)
 
