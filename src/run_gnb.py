@@ -50,8 +50,7 @@ data_train, data_test = train_test_split(data_discr, test_size=0.15, random_stat
 if algorithm == "GNBO":
   score_matrix, pair1, v1, pair2, v2, max_triplet, v3 = create_score_matrix(data_train, num_cols-1)
   heads, tree_score = chu_liu_edmonds(score_matrix)
-  triplet_list, pair_list, ic_list = get_triplet_list_from_chu_liu(heads, score_matrix, 
-                                                                   int(max_triplet[1][1:]), int(max_triplet[2][1:]))
+  triplet_list, pair_list, ic_list = get_triplet_list_from_chu_liu(heads, int(max_triplet[1][1:]), int(max_triplet[2][1:]))
 elif algorithm == "GNBA":
   max_ic, max_ic_diff_dict, triplet_list = get_sorted_triple_list(data_train)
   pair_list = None
