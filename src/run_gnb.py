@@ -30,6 +30,7 @@ num_cols = data.shape[1]
 label1 = data['Y'].unique()[0]
 label2 = data['Y'].unique()[1]
 label_pos = label1
+label_neg = label2
 
 var_to_index_dict = {}
 for i in range(1,num_cols): var_to_index_dict['X{}'.format(i)] = i-1
@@ -62,7 +63,7 @@ data_test_result, accuracy, precision, recall, auc = test_result(data_test,
                                                                 data_train, 
                                                                 triplet_list, 
                                                                 pair_list, 
-                                                                label_pos,
+                                                                label_pos, label_neg,
                                                                 algorithm)
 print('accuracy:', round(accuracy, 4))
 print('precision:', round(precision, 4)) 
@@ -77,7 +78,7 @@ data_test_results, accuracy_list, precision_list, recall_list, auc_list = test_r
                                                                                       X_train, 
                                                                                       triplet_list, 
                                                                                       pair_list, 
-                                                                                      label_pos,
+                                                                                      label_pos, label_neg,
                                                                                       algorithm)
 plt.plot(list(range(1,num_cols-1)), np.array(accuracy_list), label='accuracy')
 plt.plot(list(range(1,num_cols-1)), np.array(precision_list), label='precision')
