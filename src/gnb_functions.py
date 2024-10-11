@@ -176,19 +176,19 @@ def get_probability(vector_realization, dataframe, triplet_list, pair_list, labe
       prob = np.prod(t_prob_list)/np.prod(p_prob_list)
     return prob
 
-def get_probabilities_and_prediction(vector_realization, y, dataframe, triplet_list, pair_list, algorithm):
+def get_probabilities_and_prediction(vector_realization, y, dataframe, triplet_list, pair_list, algorithm, label_pos, label_neg):
     # p_1
-    p_1 = get_probability(vector_realization, dataframe, triplet_list, pair_list, label1, algorithm)
+    p_1 = get_probability(vector_realization, dataframe, triplet_list, pair_list, label_pos, algorithm)
     # p_2
-    p_2 = get_probability(vector_realization, dataframe, triplet_list, pair_list, label2, algorithm)
+    p_2 = get_probability(vector_realization, dataframe, triplet_list, pair_list, label_neg, algorithm)
     
     if p_1 >= p_2:
-        pred = label1
+        pred = label_pos
     elif p_1 < p_2:
-        pred = label2
+        pred = label_neg
     else:
         pred = np.nan
-    return pd.DataFrame({'label': y, 'prob_'+str(label1): p_1, 'prob_'+str(label2): p_2, 'prediction': pred})
+    return pd.DataFrame({'label': y, 'prob_'+str(label_pos): p_1, 'prob_'+str(label_neg): p_2, 'prediction': pred})
 
 def get_sorted_triple_list(data_train):
     V_list = data_train.columns[1:].tolist()
@@ -244,12 +244,12 @@ def get_sorted_triplet_list_from_chu_liu(heads, score_matrix, X_max_index, X_max
     print(d_parent)
     return sorted_triplet_list[::-1], sorted_pair_list[::-1], ic_list[::-1]
 
-def test_result(data_test, data_train, V3_list, V2_list, label_pos, algorithm):
-    data_test_results = pd.DataFrame(columns = ['label', 'prob_'+str(label1), 'prob_'+str(label2), 'prediction'])
+def test_result(data_test, data_train, V3_list, V2_list, label_pos, label_neg, algorithm):
+    data_test_results = pd.DataFrame(columns = ['label', 'prob_'+str(label_pos), 'prob_'+str(label_neg), 'prediction'])
     for index, row in data_test.iterrows():
         y = np.array([row['Y']])
         vector = np.array(row[1:])
-        pred_row = get_probabilities_and_prediction(vector, y, data_train, V3_list, V2_list, algorithm)
+        pred_row = get_probabilities_and_prediction(vector, y, data_train, V3_list, V2_list, algorithm, label_pos, label_neg)
         data_test_results = pd.concat([data_test_results, pred_row], 
                                       ignore_index=True)
 
@@ -264,13 +264,13 @@ def test_result(data_test, data_train, V3_list, V2_list, label_pos, algorithm):
     auc = roc_auc_score(data_test_results['label'], data_test_results['prediction'])
     return data_test_results, accuracy, precision, recall, auc
 
-def test_results(data_test, data_train, V3_list, V2_list, label_pos):
+def test_results(data_test, data_train, V3_list, V2_list, label_pos, label_neg, algorithm):
     accuracy_list = []
     precision_list = []
     recall_list = []
     auc_list = []
     for num_of_triplets in range(1,num_cols-1):
-        data_test_results = pd.DataFrame(columns = ['label', 'prob_'+str(label1), 'prob_'+str(label2), 'prediction'])
+        data_test_results = pd.DataFrame(columns = ['label', 'prob_'+str(label_pos), 'prob_'+str(label_neg), 'prediction'])
         for index, row in data_test.iterrows():
             y = np.array([row['Y']])
             vector = np.array(row[1:])
