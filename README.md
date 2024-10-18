@@ -16,3 +16,9 @@ https://arxiv.org/html/2408.15923v1
 - `data_path` the path to the data used
 - `algorithm` is the algorithm used, either `GNBA` or `GNBO` (default is `GNBO`)
 - `num_of_intervals` is the number of discretization intervals (default is `5`)
+
+## Output interpretation
+
+- The program outputs the triplets found, see the Article linked above for the interpretation.
+- The program also outputs the accuracy, precision, recall, F1 & AUC scores with all triplets used.
+- Finally, the program plots a graph which shows how the above scores change with triplets added one by one.
